@@ -1,0 +1,229 @@
+#include <iostream>
+#include <gtest/gtest.h>
+#include "../src/utils.h"
+#include "../src/Neuron.h"
+#include "../src/Network.h"
+
+TEST(utils, activation_function) {
+  float output = 0.0;
+  output = utils::activation_function(-100.0);
+  output = utils::activation_function(100.0);
+  output = utils::activation_function(-1.0);
+  output = utils::activation_function(1.0);
+  output = utils::activation_function(0.0);
+  output = utils::activation_function(-0.5);
+  output = utils::activation_function(0.5);
+}
+
+TEST(Neuron, create_and_delete) {
+  Neuron* neuron;
+  neuron = new Neuron();
+  delete neuron;
+}
+
+TEST(Neuron, forceOutput) {
+  Neuron neuron;
+  neuron.forceOutput(0.7);
+  ASSERT_FLOAT_EQ(neuron.getOutput(), 0.7);
+}
+
+TEST(Neuron, adding_and_removing_sources) {
+  Neuron neuron1;
+  Neuron neuron2;
+  Neuron neuron3;
+  neuron2.addSource(&neuron1, 0.5);
+  ASSERT_EQ(neuron1.getNumberOfSources(), 0);
+  ASSERT_EQ(neuron2.getNumberOfSources(), 1);
+
+  ASSERT_THROW(
+    neuron2.getSource(1),
+    std::invalid_argument
+  );
+  ASSERT_EQ(neuron2.getSource(0), &neuron1);
+  ASSERT_THROW(
+    neuron2.getWeight(1),
+    std::invalid_argument
+  );
+  ASSERT_FLOAT_EQ(neuron2.getWeight(0), 0.5);
+
+  ASSERT_THROW(
+    neuron2.removeSourceByIndex(1),
+    std::invalid_argument
+  );
+
+  neuron2.removeSourceByIndex(0);
+  ASSERT_EQ(neuron2.getNumberOfSources(), 0);
+
+  neuron1.addSource(&neuron2, 0.5);
+  ASSERT_EQ(neuron1.getNumberOfSources(), 1);
+  neuron1.removeSource(&neuron3);
+  ASSERT_EQ(neuron1.getNumberOfSources(), 1);
+  neuron1.removeSource(&neuron2);
+  ASSERT_EQ(neuron1.getNumberOfSources(), 0);
+}
+
+TEST (Neuron, calculating_output) {
+  Neuron neuron1;
+  Neuron neuron2;
+  Neuron neuron3;
+
+  neuron1.addSource(&neuron2, 0.5);
+  neuron1.addSource(&neuron3, 0.7);
+  neuron1.setBias(-0.3);
+  neuron1.reset();
+  neuron2.reset();
+  neuron3.reset();
+  neuron2.forceOutput(0.1);
+  neuron3.forceOutput(0.2);
+  ASSERT_FLOAT_EQ(
+    neuron1.getOutput(),
+    utils::activation_function(
+      0.1*0.5 + 0.2*0.7 - 0.3
+    )
+  );
+  ASSERT_FLOAT_EQ(
+    neuron1.getOutput(),
+    utils::activation_function(
+      0.1*0.5 + 0.2*0.7 - 0.3
+    )
+  );
+}
+
+TEST (Network, create_and_delete) {
+  Network* network = new Network();
+  delete network;
+}
+
+TEST (Network, create_and_remove_neuron) {
+  Network network;
+  ASSERT_EQ(network.getNumberOfNeurons(), 0);
+  network.createNeuron(neuron);
+  ASSERT_EQ(network.getNumberOfNeurons(), 1);
+  ASSERT_THROW(
+    network.getNeuronByIndex(1),
+    std::invalid_argument
+  );
+  ASSERT_EQ(network.getNeuronByIndex(0), neuron);
+  ASSERT_THROW(
+    network.removeNeuronByIndex(1),
+    std::invalid_argument
+  );
+  Neuron* neuron2 = new Neuron();
+  ASSERT_THROW(
+    network.getIndexByNeuron(neuron2),
+    std::invalid_argument
+  );
+  ASSERT_EQ(network.getIndexByNeuron(neuron), 0);
+  network.removeNeuronByIndex(0);
+  ASSERT_EQ(network.getNumberOfNeurons(), 0);
+
+  delete neuron;
+  delete neuron2;
+}
+
+TEST ( Network, create_connect_and_delete_neurons) {
+  Network network;
+  network.addNeuron(new Neuron());
+  network.addNeuron(new Neuron());
+  network.addNeuron(new Neuron());
+  ASSERT_EQ(network.getNumberOfNeurons(), 3); 
+  network.connect(0, 1, 0.5);
+  ASSERT_EQ(network.getNeuronByIndex(0)->getNumberOfSources(), 0);
+  ASSERT_EQ(network.getNeuronByIndex(1)->getNumberOfSources(), 1);
+
+  network.reset();
+  network.getNeuronByIndex(0)->forceOutput(0.1);
+  ASSERT_FLOAT_EQ(network.getNeuronByIndex(1)->getOutput(), utils::activation_function(0.1*0.5));
+
+  delete network.getNeuronByIndex(0);
+  network.removeNeuronByIndex(0);
+  ASSERT_EQ(network.getNumberOfNeurons(), 2);
+  ASSERT_EQ(network.getNeuronByIndex(0)->getNumberOfSources(), 0);
+}
+
+TEST ( Network, create_and_delete_inputs_and_outputs) {
+  Network network;
+  network.addNeuron(new Neuron());
+  network.addNeuron(new Neuron());
+  network.addNeuron(new Neuron());
+  
+  network.connect(0, 1, 0.5);
+  network.connect(1, 2, 0.2);
+
+  network.getNeuronByIndex(1)->setBias(-0.4);
+  network.getNeuronByIndex(2)->setBias(0.1);
+
+
+  ASSERT_EQ(network.getNumberOfInputs(), 0);
+  network.addInput(network.getNeuronByIndex(0));
+  ASSERT_EQ(network.getNumberOfInputs(), 1);
+
+
+  ASSERT_EQ(network.getNumberOfOutputs(), 0);
+  network.addOutput(network.getNeuronByIndex(2));
+  ASSERT_EQ(network.getNumberOfOutputs(), 1);
+
+  network.reset();
+  ASSERT_THROW(
+    network.setInput(std::vector<float> {}),
+    std::invalid_argument
+  );
+  ASSERT_THROW(
+    network.setInput(std::vector<float> {0.4, 0.3}),
+    std::invalid_argument
+  );
+  network.setInput(std::vector<float> {0.4});
+  std::vector<float> correct_output = {utils::activation_function(utils::activation_function(0.5*0.4-0.4)*0.2 + 0.1)};
+  std::vector<float> output = network.getOutput();
+  ASSERT_EQ(output.size(), correct_output.size());
+  ASSERT_FLOAT_EQ(output[0], correct_output[0]);
+
+
+  network.removeNeuronByIndex(0);
+  ASSERT_EQ(network.getNumberOfInputs(), 0);
+  network.removeNeuronByIndex(1);
+  ASSERT_EQ(network.getNumberOfOutputs(), 0);
+  
+}
+
+TEST (Network, read_from_file) {
+  Network network;
+  ASSERT_THROW(
+    network.readFromFile("not_exists/file.txt"),
+    std::invalid_argument
+  );
+  network.readFromFile("../test/testfiles/test1.txt");
+
+}
+
+TEST (Network, write_to_file) {
+  Network network;
+  Neuron neuron1;
+  Neuron neuron2;
+  Neuron neuron3;
+  Neuron neuron4;
+
+  network.addNeuron(&neuron1);
+  network.addNeuron(&neuron2);
+  network.addNeuron(&neuron3);
+  network.addNeuron(&neuron4);
+
+  network.addInput(&neuron1);
+  network.addInput(&neuron2);
+  network.addOutput(&neuron4);
+
+  network.connect(0, 2, 0.1);
+  network.connect(1, 2, 0.2);
+  network.connect(2, 3, 0.3);
+
+  ASSERT_THROW(
+    network.writeToFile("not_exsists/file.txt"),
+    std::invalid_argument
+  );
+  network.writeToFile("../test/testfiles/test1.txt");
+}
+
+int main(int argc, char** argv) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
