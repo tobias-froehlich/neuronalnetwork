@@ -21,9 +21,6 @@ void Database::readFromFile(std::string filename) {
   file >> number_of_inputs;
   file >> number_of_outputs;
   file >> number_of_examples;
-  std::cout << "number of inputs : " << number_of_inputs << '\n';
-  std::cout << "number of outputs : " << number_of_outputs << '\n';
-  std::cout << "number of examples : " << number_of_examples << '\n';
   float number = 0.0;
   for(unsigned int e=0; e<number_of_examples; e++) {
     inputs_.push_back({});

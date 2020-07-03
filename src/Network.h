@@ -50,6 +50,8 @@ class Network {
     void addGradientsToDelta();
     float absDelta();
     void applyDelta(float factor);
+    void applyDeltaBiasesOnly(float factor);
+    void applyDeltaWeightsOnly(float factor);
     void BackPropagation(std::vector<float> input, std::vector<float> output);
     void writePythonScript(std::string filename);
 };

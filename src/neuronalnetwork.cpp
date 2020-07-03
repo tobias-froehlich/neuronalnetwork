@@ -19,9 +19,14 @@ int main(int argc, char** argv) {
     //                 0              1            2           3
     std::string infilename = std::string(argv[2]);
     std::string outfilename = std::string(argv[3]);
+    std::cout << " ====== neuronalnetwork export ====== \n";
     Network network;
+    std::cout << "     Reading file " << infilename << " ..."; std::cout.flush();
     network.readFromFile(infilename);
+    std::cout << " done.\n";
+    std::cout << "     Writing file " << outfilename << " ..."; std::cout.flush();
     network.writePythonScript(outfilename);
+    std::cout << " done.\n\n";
   }
 
 
@@ -30,26 +35,43 @@ int main(int argc, char** argv) {
     //          neuronalnetwork create /tmp/nw.txt 784 16 16 10
     //               0            1         2       3   4  5  6
     std::string filename = std::string(argv[2]);
+    std::cout << " ====== neuronalnetwork create ====== \n";
+    std::cout << "     Sizes of layers: ";
     std::vector< unsigned int > layers{};
     for(unsigned int i=3; i<argc; i++) {
       layers.push_back(std::stoi(argv[i]));
+      std::cout << argv[i] << " ";
     }
+    std::cout << '\n';
+    std::cout << "     Creating network with this architecture ..."; std::cout.flush();
     Network network(layers);
+    std::cout << " done.\n";
+    std::cout << "     Writing file " << filename << " ..."; std::cout.flush();
     network.writeToFile(filename);
+    std::cout << " done.\n\n";
   }
 
   if ((argc == 4) && (std::string(argv[1]) == "randomize") ) {
     // example:
     //          neuronalnetwork randomize /tmp/nw.txt 1.0
     //                 0            1          2       3
+    std::cout << " ====== neuronalnetwork randomize ====== \n";
     std::string infilename = std::string(argv[2]);
     float factor = std::stof(argv[3]);
     std::string outfilename = std::string(argv[2]);
     Network network;
+    std::cout << "     Reading file " << infilename << " ..."; std::cout.flush();
     network.readFromFile(infilename);
+    std::cout << " done.\n";
+    std::cout << "     Randomizing biases ..."; std::cout.flush();
     network.randomizeBiases(factor);
+    std::cout << " done.\n";
+    std::cout << "     Randomizing weights ..."; std::cout.flush();
     network.randomizeWeights(factor);
+    std::cout << " done.\n";
+    std::cout << "     Writing file " << outfilename << " ..."; std::cout.flush();
     network.writeToFile(outfilename);
+    std::cout << " done.\n\n";
   }
 
   if ((argc == 9) && (std::string(argv[1]) == "stochasticgradient") ) {
@@ -63,7 +85,7 @@ int main(int argc, char** argv) {
     //  6 : number of examples to exclude at the end of the database for later test
     //  7 : factor for applying the gradient
     //  8 : number of datasets to be used for training
-
+    std::cout << " ====== neuronalnetwork stochasticgradient ====== \n";
     std::string networkfilename(argv[2]);
     std::string databasefilename(argv[3]);
     unsigned int numberOfExamples = std::stoi(argv[4]);
@@ -71,11 +93,25 @@ int main(int argc, char** argv) {
     unsigned int numberOfExamplesToExclude = std::stoi(argv[6]);
     float factor = std::stof(argv[7]);
     unsigned int numberOfDatasets = std::stoi(argv[8]);
-    Network network;
-    network.readFromFile(networkfilename);
 
+    std::cout << "     - network filename:                 " << networkfilename << '\n';
+    std::cout << "     - database filename:                " << databasefilename << '\n';
+    std::cout << "     - number of examples:               " << numberOfExamples << '\n';
+    std::cout << "     - number of cycles per dataset:     " << numberOfCyclesPerDataset << '\n';
+    std::cout << "     - number of examples to exclude:    " << numberOfExamplesToExclude << '\n';
+    std::cout << "     - factor for applying the gradient: " << factor << '\n';
+    std::cout << "     - number of datasets for training:  " << numberOfDatasets << '\n';
+
+    Network network;
+    std::cout << "     Reading network file " << networkfilename << " ..."; std::cout.flush();
+    network.readFromFile(networkfilename);
+    std::cout << " done.\n";
+
+    std::cout << "     Creating trainer with database file " << databasefilename << " ..."; std::cout.flush();
     Trainer trainer(databasefilename);
+    std::cout << " done.\n";
     for(unsigned int i=0; i<numberOfDatasets; i++) {
+      std::cout << "     Training with dataset " << i << " ..."; std::cout.flush();
       trainer.StochasticGradientOneBatch(
         network,
         numberOfExamples,
@@ -83,8 +119,12 @@ int main(int argc, char** argv) {
         numberOfExamplesToExclude,
         factor
       );
+      std::cout << " done\n";
+      std::cout << "     Writing network to file " << networkfilename << " ..."; std::cout.flush();
       network.writeToFile(networkfilename);
+      std::cout << " done.\n";
     }
+    std::cout << '\n';
   }
 
 /*

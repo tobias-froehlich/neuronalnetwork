@@ -230,15 +230,22 @@ float Neuron::sumOfDeltaSquared() {
 }
 
 void Neuron::applyDelta(float factor) {
+  applyDeltaBiasOnly(factor);
+  applyDeltaWeightsOnly(factor);
+}
+
+void Neuron::applyDeltaBiasOnly(float factor) {
+  bias_ += biasDelta_ * factor;
+//  if (bias_ > 1.0) {bias_ = 1.0;}
+//  if (bias_ < -1.0) {bias_ = -1.0;}
+}
+
+void Neuron::applyDeltaWeightsOnly(float factor) {
   for(unsigned int i=0; i<number_of_sources_; i++) {
     weights_[i] += weightsDelta_[i] * factor;
-    if (weights_[i] > 1.0) {weights_[i] = 1.0;}
-    if (weights_[i] < -1.0) {weights_[i] = -1.0;}
+//    if (weights_[i] > 1.0) {weights_[i] = 1.0;}
+//    if (weights_[i] < -1.0) {weights_[i] = -1.0;}
   }
-  
-  bias_ += biasDelta_ * factor;
-  if (bias_ > 1.0) {bias_ = 1.0;}
-  if (bias_ < -1.0) {bias_ = -1.0;}
 }
 
 void Neuron::reduceWeights() {

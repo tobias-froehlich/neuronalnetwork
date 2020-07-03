@@ -236,6 +236,13 @@ void Trainer::StochasticGradientOneBatch(Network & network, unsigned int numberO
       network.addGradientsToDelta();
     }
     network.applyDelta(-factor);
+/*    if (cycle % 2 == 0) {
+      network.applyDeltaBiasesOnly(-factor);
+    }
+    else {
+      network.applyDeltaWeightsOnly(-factor);
+    }
+*/
     float cost = calculate_cost(indices, network);
     utils::log(std::string("cycle=") + std::to_string(cycle) + std::string(" cost=") + std::to_string(cost) + std::string(" factor=") + std::to_string(factor));
   }

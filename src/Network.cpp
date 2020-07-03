@@ -454,6 +454,19 @@ void Network::applyDelta(float factor) {
   }
 }
 
+void Network::applyDeltaBiasesOnly(float factor) {
+  for(Neuron* & neuron : neurons_) {
+    neuron->applyDeltaBiasOnly(factor);
+  }
+}
+
+void Network::applyDeltaWeightsOnly(float factor) {
+  for(Neuron* & neuron : neurons_) {
+    neuron->applyDeltaWeightsOnly(factor);
+  }
+}
+
+
 void Network::BackPropagation(std::vector<float> input, std::vector<float> output) {
   reset();
   resetGradients();

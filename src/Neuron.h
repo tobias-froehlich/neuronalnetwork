@@ -54,6 +54,8 @@ class Neuron {
     void addGradientToDelta();
     float sumOfDeltaSquared();
     void applyDelta(float factor);
+    void applyDeltaBiasOnly(float factor);
+    void applyDeltaWeightsOnly(float factor);
     void reduceWeights();
     void print();
     void setPythonVarName(std::string name);
