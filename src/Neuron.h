@@ -57,7 +57,6 @@ class Neuron {
     void applyDeltaBiasOnly(float factor);
     void applyDeltaWeightsOnly(float factor);
     void reduceWeights();
-    void print();
     void setPythonVarName(std::string name);
     std::string getPythonVarName();
     void getPythonScript(std::ostream & os);

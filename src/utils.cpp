@@ -10,10 +10,28 @@ namespace utils {
 
   float activation_function(float input) {
     return 0.5 * tanh(input - 0.5) + 0.5;
+/*    if (input < 0.0) {
+      return input * 0.05;
+    }
+    else if (input < 1.0) {
+      return input;
+    }
+    else {
+      return 1.0 + (input - 1.0)* 0.05;
+    }*/
   }
 
   float activation_function_derivative(float input) {
     return 0.5 * (1.0 - square(tanh(input - 0.5)));
+/*    if (input < 0.0) {
+      return 0.05;
+    }
+    else if (input < 1.0) {
+      return 1.0;
+    }
+    else {
+      return 0.05;
+    }*/
   }
 
   std::vector< std::string > split(std::string str, char delimiter) {

@@ -107,7 +107,6 @@ TEST (Neuron, calculating_output) {
       0.1*0.5 + 0.2*0.7 - 0.3
     )
   );
-  neuron1.print();
 }
 
 TEST (Neuron, gradient1) {
@@ -399,7 +398,7 @@ TEST (Network, write_to_file) {
   );
   network.writeToFile("../test/testfiles/test1.txt");
 }
-
+/*
 TEST (Network, create_from_parents) {
   Network network1;
   Network network2;
@@ -533,7 +532,7 @@ TEST (Network, create_from_parents) {
     0.0
   ); 
 }
-
+*/
 
 TEST (Network, packpropagation) {
   Network network;

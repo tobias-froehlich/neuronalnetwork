@@ -263,22 +263,6 @@ void Neuron::reduceWeights() {
   }
 }
 
-void Neuron::print() {
-  std::cout << "    Neuron at " << this << '\n';
-  std::cout << "        number_of_sources_ = " << number_of_sources_ << '\n';
-  std::cout << "        number_of_drains_ = " << number_of_drains_ << '\n';
-  std::cout << "        source_neurons_ = [";
-  for(Neuron* neuron: source_neurons_) {
-    std::cout << neuron << ", ";
-  }
-  std::cout << "]\n";
-  std::cout << "        weights_ = [";
-  for (float w : weights_) {
-    std::cout << w << ", ";
-  }
-  std::cout << "]\n";
-}
-
 void Neuron::setPythonVarName(std::string name) {
   pythonVarName_ = name;
 }

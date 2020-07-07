@@ -54,7 +54,7 @@ Network::Network(std::vector<unsigned int> layers) : Network() {
     addOutput(getNeuronByIndex(i));
   }
 }
-
+/*
 Network::Network(const Network & parent1, const Network & parent2) : Network() {
   if (parent1.getNumberOfInputs() != parent2.getNumberOfInputs()) {
     throw std::invalid_argument(
@@ -132,7 +132,7 @@ Network::Network(const Network & parent1, const Network & parent2) : Network() {
     }
   }
 }
-
+*/
 Network::~Network() {
   for(unsigned int i=0; i<numberOfNeurons_; i++) {
     delete neurons_[i];

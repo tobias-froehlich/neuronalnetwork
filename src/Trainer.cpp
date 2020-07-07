@@ -14,7 +14,7 @@ Trainer::Trainer(std::string databasefilename) {
 Trainer::~Trainer() {
 
 }
-
+/*
 unsigned int Trainer::number_of_correct(std::vector<unsigned int> indices, Network & network) {
   unsigned int result = 0;
   std::vector<float> input{};
@@ -32,7 +32,7 @@ unsigned int Trainer::number_of_correct(std::vector<unsigned int> indices, Netwo
   }
   return result;
 }
-
+*/
 float Trainer::calculate_cost(std::vector<unsigned int> indices, Network & network) {
   float result = 0.0;
   std::vector<float> input{};
@@ -50,7 +50,7 @@ float Trainer::calculate_cost(std::vector<unsigned int> indices, Network & netwo
   }
   return result;
 }
-
+/*
 void Trainer::trainOutputOnly(Network & network, unsigned int number_of_cycles, unsigned int number_of_samples, float randomizefactor) {
   Network network_copy(network);
   
@@ -88,6 +88,9 @@ void Trainer::trainOutputOnly(Network & network, unsigned int number_of_cycles, 
     }
   }
 }
+*/
+
+/*
 void Trainer::train(Network & network, unsigned int number_of_cycles, unsigned int number_of_samples, float randomizefactor) {
   Network network_copy(network);
   
@@ -123,7 +126,7 @@ void Trainer::train(Network & network, unsigned int number_of_cycles, unsigned i
     }
     std::cout << N << "         " << (float)correct1 / float(N) << '\n';
   }
-
+*/
 
 //  Network network_copy(network);
 //  
@@ -160,8 +163,9 @@ void Trainer::train(Network & network, unsigned int number_of_cycles, unsigned i
 //      }
 //    }
 //  }
-}
+//}
 
+/*
 void Trainer::reduce(Network & network, unsigned int number_of_samples) {
   unsigned int best_for_reduction = network.getNumberOfNeurons();
   float best_cost = 1000000.0;
@@ -201,6 +205,8 @@ void Trainer::reduce(Network & network, unsigned int number_of_samples) {
   network.removeNeuronByIndex(best_for_reduction);
   std::cout << "new cost: " << best_cost << '\n';
 }
+*/
+
 
 void Trainer::StochasticGradientOneBatch(Network & network, unsigned int numberOfSamples, unsigned int numberOfCycles, unsigned int without_last, float factor) {
   std::default_random_engine generator(time(0));
@@ -224,7 +230,6 @@ void Trainer::StochasticGradientOneBatch(Network & network, unsigned int numberO
   }
 
 
-  utils::log(std::string(" numberOfCorrect=") + std::to_string(number_of_correct(indices, network)));
   utils::log(std::string("factor=") + std::to_string(factor));
   utils::log(std::string("numberOfSamples=") + std::to_string(numberOfSamples));
   for(unsigned int cycle=0; cycle<numberOfCycles; cycle++) {
