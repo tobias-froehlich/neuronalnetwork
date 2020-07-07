@@ -6,17 +6,10 @@
 #include "Neuron.h"
 
 Neuron::Neuron() {
-//  std::ofstream file;
-//  file.open("/tmp/log.txt", std::ios_base::app);
-//  file << "*";
-//  file.close();
+
 }
 
 Neuron::~Neuron() {
-//  std::ofstream file;
-//  file.open("/tmp/log.txt", std::ios_base::app);
-//  file << "+";
-//  file.close();
 
 }
 
@@ -160,7 +153,6 @@ float Neuron::getBias() {
 }
 
 void Neuron::resetGradients() {
-//  std::cout << "nueuron reset gradient\n";
   for(unsigned int i=0; i<number_of_sources_; i++) {
     weightsGradient_[i] = 0.0;
   }
@@ -236,15 +228,11 @@ void Neuron::applyDelta(float factor) {
 
 void Neuron::applyDeltaBiasOnly(float factor) {
   bias_ += biasDelta_ * factor;
-//  if (bias_ > 1.0) {bias_ = 1.0;}
-//  if (bias_ < -1.0) {bias_ = -1.0;}
 }
 
 void Neuron::applyDeltaWeightsOnly(float factor) {
   for(unsigned int i=0; i<number_of_sources_; i++) {
     weights_[i] += weightsDelta_[i] * factor;
-//    if (weights_[i] > 1.0) {weights_[i] = 1.0;}
-//    if (weights_[i] < -1.0) {weights_[i] = -1.0;}
   }
 }
 

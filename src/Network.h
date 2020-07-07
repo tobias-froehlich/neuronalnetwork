@@ -15,7 +15,6 @@ class Network {
     Network();
     Network(const Network & other);
     Network(std::vector<unsigned int> layers);
-//    Network(const Network & parent1, const Network & parent2);
     ~Network();
     void passParameters(Network & other) const;
     unsigned int getNumberOfNeurons() const;
