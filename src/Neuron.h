@@ -3,24 +3,24 @@
 
 class Neuron {
   private:
-    unsigned int number_of_sources_ = 0;
-    unsigned int number_of_drains_ = 0;
-    std::vector<Neuron*> source_neurons_ {};
+    unsigned int numberOfSources_ = 0;
+    unsigned int numberOfDrains_ = 0;
+    std::vector<Neuron*> sourceNeurons_ {};
+    std::vector<Neuron*> drainNeurons_ {};
     std::vector<float> weights_ {};
     std::vector<float> weightsGradient_ {};
     std::vector<float> weightsDelta_ {};
-    std::vector<Neuron*> drain_neurons_ {};
-    std::vector<unsigned int> drainSourceIndices_{};
+    bool weightGradientSet_ = false;
     float bias_ = 0.0;
     float biasGradient_ = 0.0;
     float biasDelta_ = 0.0;
-    float outputWithoutActivationFunction_ = 0.0;
+    bool biasGradientSet_ = false;
     float output_ = 0.0;
     float outputGradient_ = 0.0;
-    bool set_ = false;
-    bool weightGradientSet_ = false;
-    bool biasGradientSet_ = false;
+    bool OutputSet_ = false;
     bool outputGradientSet_ = false;
+    std::vector<unsigned int> drainSourceIndices_{};
+    float outputWithoutActivationFunction_ = 0.0;
     std::string pythonVarName_{""};
   public:
     Neuron();
@@ -42,7 +42,7 @@ class Neuron {
     float getPreviousOutput();
     float getOutput();
     float getOutputWithoutActivationFunction();
-    void reset();
+    void resetOutput();
     void setBias(float bias);
     float getBias();
     void resetGradients();

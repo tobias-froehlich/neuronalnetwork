@@ -207,9 +207,9 @@ void Network::connect(
   );
 }
 
-void Network::reset() {
+void Network::resetOutputs() {
   for(unsigned int i=0; i < numberOfNeurons_; i++) {
-    neurons_[i]->reset();
+    neurons_[i]->resetOutput();
   }
 }
 
@@ -390,7 +390,7 @@ void Network::applyDeltaWeightsOnly(float factor) {
 
 
 void Network::BackPropagation(std::vector<float> input, std::vector<float> output) {
-  reset();
+  resetOutputs();
   resetGradients();
   setInput(input);
   for(unsigned int i=0; i<numberOfOutputs_; i++) {
@@ -416,7 +416,7 @@ void Network::writePythonScript(std::string filename) {
   file << "    a = [0.0] * " << numberOfNeurons_ << "\n";
   unsigned int count = 0;
   for(Neuron* neuron : neurons_) {
-    neuron->reset();
+    neuron->resetOutput();
     neuron->setPythonVarName(std::string("a[") + std::to_string(count) + std::string("]"));
     count++;
   }

@@ -23,7 +23,7 @@ float Trainer::calculate_cost(std::vector<unsigned int> indices, Network & netwo
   for(unsigned int index : indices) {
     input = database_.getInput(index);
     correct_output = database_.getOutput(index);
-    network.reset();
+    network.resetOutputs();
     network.setInput(input);
     output = network.getOutput();
     for(unsigned int i=0; i<output.size(); i++) {
@@ -62,7 +62,7 @@ void Trainer::StochasticGradientOneBatch(Network & network, unsigned int numberO
     float cost_old = calculate_cost(indices, network);
     network.resetDelta();
     for(unsigned int i=0; i<numberOfSamples; i++) {
-      network.reset();
+      network.resetOutputs();
       network.BackPropagation(inputs[i], outputs[i]);
       network.addGradientsToDelta();
     }

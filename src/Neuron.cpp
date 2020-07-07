@@ -14,24 +14,24 @@ Neuron::~Neuron() {
 }
 
 unsigned int Neuron::getNumberOfSources() {
-  return number_of_sources_;
+  return numberOfSources_;
 }
 
 unsigned int Neuron::getNumberOfDrains() {
-  return number_of_drains_;
+  return numberOfDrains_;
 }
 
 Neuron* Neuron::getSource(unsigned int index) {
-  if (index >= number_of_sources_) {
+  if (index >= numberOfSources_) {
     throw std::invalid_argument(
       "Index exeeds number of sources."
     );
   }
-  return source_neurons_[index];
+  return sourceNeurons_[index];
 }
 
 Neuron* Neuron::getDrain(unsigned int index) {
-  return drain_neurons_[index];
+  return drainNeurons_[index];
 }
 
 unsigned int Neuron::getDrainSourceIndex(unsigned int index) {
@@ -39,7 +39,7 @@ unsigned int Neuron::getDrainSourceIndex(unsigned int index) {
 }
 
 void Neuron::setWeight(unsigned int index, float weight) {
-  if (index >= number_of_sources_) {
+  if (index >= numberOfSources_) {
     throw std::invalid_argument(
       "Index exeeds number of sources."
     );
@@ -49,7 +49,7 @@ void Neuron::setWeight(unsigned int index, float weight) {
 
 
 float Neuron::getWeight(unsigned int index) {
-  if (index >= number_of_sources_) {
+  if (index >= numberOfSources_) {
     throw std::invalid_argument(
       "Index exeeds number of sources."
     );
@@ -58,53 +58,53 @@ float Neuron::getWeight(unsigned int index) {
 }
 
 void Neuron::addSource(Neuron* neuron, float weight) {
-  source_neurons_.push_back(neuron);
+  sourceNeurons_.push_back(neuron);
   weights_.push_back(weight);
   weightsGradient_.push_back(0.0);
   weightsDelta_.push_back(0.0);
-  neuron->addDrain(this, number_of_sources_);
-  number_of_sources_++;
+  neuron->addDrain(this, numberOfSources_);
+  numberOfSources_++;
 }
 
 void Neuron::addDrain(Neuron* neuron, float drainSourceIndex) {
-  drain_neurons_.push_back(neuron);
+  drainNeurons_.push_back(neuron);
   drainSourceIndices_.push_back(drainSourceIndex);
-  number_of_drains_++;
+  numberOfDrains_++;
 }
 
 void Neuron::removeSourceByIndex(unsigned int index) {
-  if (index >= number_of_sources_) {
+  if (index >= numberOfSources_) {
     throw std::invalid_argument(
       "Cannot remove source at that index."
     );
   }
-  Neuron* neuron = source_neurons_[index];
+  Neuron* neuron = sourceNeurons_[index];
   neuron->removeDrain(this);
-  source_neurons_.erase(source_neurons_.begin() + index);
+  sourceNeurons_.erase(sourceNeurons_.begin() + index);
   weights_.erase(weights_.begin() + index);
   weightsGradient_.erase(weightsGradient_.begin() + index);
   weightsDelta_.erase(weightsDelta_.begin() + index);
-  number_of_sources_--;
+  numberOfSources_--;
 }
 
 void Neuron::removeSource(Neuron* neuron) {
-  for(unsigned int i=0; i<number_of_sources_; i++) {
-    if (source_neurons_[i] == neuron) {
+  for(unsigned int i=0; i<numberOfSources_; i++) {
+    if (sourceNeurons_[i] == neuron) {
       removeSourceByIndex(i);
     }
   }
 }
 
 void Neuron::removeDrainByIndex(unsigned int index) {
-  drain_neurons_.erase(drain_neurons_.begin() + index);
+  drainNeurons_.erase(drainNeurons_.begin() + index);
   drainSourceIndices_.erase(drainSourceIndices_.begin() + index);
-  number_of_drains_--;
+  numberOfDrains_--;
 }
 
 
 void Neuron::removeDrain(Neuron* neuron) {
-  for(unsigned int i=0; i<number_of_drains_; i++) {
-    if (drain_neurons_[i] == neuron) {
+  for(unsigned int i=0; i<numberOfDrains_; i++) {
+    if (drainNeurons_[i] == neuron) {
       removeDrainByIndex(i);
     }
   }
@@ -112,36 +112,36 @@ void Neuron::removeDrain(Neuron* neuron) {
 
 void Neuron::forceOutput(float output) {
   output_ = output;
-  set_ = true;
+  OutputSet_ = true;
 }
 
 float Neuron::getOutput() {
-  if (set_) {
+  if (OutputSet_) {
     return output_;
   }
   else {
     output_ = 0.0;
-    for(unsigned int i=0; i<number_of_sources_; i++) {
+    for(unsigned int i=0; i<numberOfSources_; i++) {
       output_ +=
-        source_neurons_[i]->getOutput()
+        sourceNeurons_[i]->getOutput()
         * weights_[i];
     }
     outputWithoutActivationFunction_ = output_ + bias_;
     output_ = utils::activation_function(outputWithoutActivationFunction_);
-    set_ = true;
+    OutputSet_ = true;
     return output_;
   }
 }
 
 float Neuron::getOutputWithoutActivationFunction() {
-  if ( ! set_ ) {
+  if ( ! OutputSet_ ) {
     getOutput();
   }
   return outputWithoutActivationFunction_;
 };
 
-void Neuron::reset() {
-  set_ = false;
+void Neuron::resetOutput() {
+  OutputSet_ = false;
 }
 
 void Neuron::setBias(float bias) {
@@ -153,7 +153,7 @@ float Neuron::getBias() {
 }
 
 void Neuron::resetGradients() {
-  for(unsigned int i=0; i<number_of_sources_; i++) {
+  for(unsigned int i=0; i<numberOfSources_; i++) {
     weightsGradient_[i] = 0.0;
   }
   biasGradient_ = 0.0;
@@ -164,7 +164,7 @@ void Neuron::resetGradients() {
 }
 
 void Neuron::resetDelta() {
-  for(unsigned int i=0; i<number_of_sources_; i++) {
+  for(unsigned int i=0; i<numberOfSources_; i++) {
     weightsDelta_[i] = 0.0;
   }
   biasDelta_ = 0.0;
@@ -178,7 +178,7 @@ void Neuron::calculateOutputGradientOutput(float correct_output) {
 float Neuron::getOutputGradient() {
   if ( ! outputGradientSet_ ) {
     outputGradient_ = 0.0;
-    for(unsigned int i=0; i<number_of_drains_; i++) {
+    for(unsigned int i=0; i<numberOfDrains_; i++) {
       Neuron* drain = getDrain(i);
       outputGradient_ += utils::activation_function_derivative(drain->getOutputWithoutActivationFunction()) * drain->getWeight(getDrainSourceIndex(i)) * drain->getOutputGradient();
     }
@@ -189,7 +189,7 @@ float Neuron::getOutputGradient() {
 
 float Neuron::getWeightGradient(unsigned int index) {
   if ( ! weightGradientSet_ ) {
-    for(unsigned int i=0; i < number_of_sources_; i++) {
+    for(unsigned int i=0; i < numberOfSources_; i++) {
       Neuron* source = getSource(i);
       weightsGradient_[i] = utils::activation_function_derivative(getOutputWithoutActivationFunction()) * source->getOutput() * getOutputGradient();
     }
@@ -207,7 +207,7 @@ float Neuron::getBiasGradient() {
 }
 
 void Neuron::addGradientToDelta() {
-  for(unsigned int i=0; i<number_of_sources_; i++) {
+  for(unsigned int i=0; i<numberOfSources_; i++) {
     weightsDelta_[i] += weightsGradient_[i];
   }
   biasDelta_ += biasGradient_;
@@ -231,17 +231,17 @@ void Neuron::applyDeltaBiasOnly(float factor) {
 }
 
 void Neuron::applyDeltaWeightsOnly(float factor) {
-  for(unsigned int i=0; i<number_of_sources_; i++) {
+  for(unsigned int i=0; i<numberOfSources_; i++) {
     weights_[i] += weightsDelta_[i] * factor;
   }
 }
 
 void Neuron::reduceWeights() {
-  if (number_of_sources_ > 32) {
+  if (numberOfSources_ > 32) {
     unsigned int i_weakest = 0;
     float weight_weakest = 1000000;
     
-    for(unsigned int i=0; i<number_of_sources_; i++) {
+    for(unsigned int i=0; i<numberOfSources_; i++) {
       if (abs(weights_[i]) < weight_weakest) {
         weight_weakest = abs(weights_[i]);
         i_weakest = i;
@@ -256,22 +256,22 @@ void Neuron::setPythonVarName(std::string name) {
 }
 
 std::string Neuron::getPythonVarName() {
-  set_ = true;
+  OutputSet_ = true;
   return pythonVarName_;
 }
 
 void Neuron::getPythonScript(std::ostream & os) {
-  if ( ! set_ ) {
-    for(Neuron* neuron : source_neurons_) {
+  if ( ! OutputSet_ ) {
+    for(Neuron* neuron : sourceNeurons_) {
       neuron->getPythonScript(os);
     }
     os << "    " << pythonVarName_ << " = f(";
-    for(unsigned int i=0; i<number_of_sources_; i++) {
-      Neuron* neuron = source_neurons_[i];
+    for(unsigned int i=0; i<numberOfSources_; i++) {
+      Neuron* neuron = sourceNeurons_[i];
       os << weights_[i] << " * " << neuron->getPythonVarName() << " + ";
     }
     os << bias_;
     os << ")\n";
   }
-  set_ = true;
+  OutputSet_ = true;
 }

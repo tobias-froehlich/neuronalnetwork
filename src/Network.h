@@ -35,7 +35,7 @@ class Network {
       unsigned int index_to,
       float weight
     );
-    void reset();
+    void resetOutputs();
     void setInput(std::vector<float> input);
     std::vector<float> getOutput();
     void readFromFile(std::string filename);

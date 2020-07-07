@@ -90,9 +90,9 @@ TEST (Neuron, calculating_output) {
   neuron1.addSource(&neuron2, 0.5);
   neuron1.addSource(&neuron3, 0.7);
   neuron1.setBias(-0.3);
-  neuron1.reset();
-  neuron2.reset();
-  neuron3.reset();
+  neuron1.resetOutput();
+  neuron2.resetOutput();
+  neuron3.resetOutput();
   neuron2.forceOutput(0.1);
   neuron3.forceOutput(0.2);
   ASSERT_FLOAT_EQ(
@@ -146,9 +146,9 @@ TEST (Neuron, gradient3) {
     neuron3.getOutput(),
     utils::activation_function(utils::activation_function(0.5*0.2-0.5)*(-0.3)-0.1)
   );
-  neuron1.reset();
-  neuron2.reset();
-  neuron3.reset();
+  neuron1.resetOutput();
+  neuron2.resetOutput();
+  neuron3.resetOutput();
   neuron1.resetGradients();
   neuron2.resetGradients();
   neuron3.resetGradients();
@@ -157,9 +157,9 @@ TEST (Neuron, gradient3) {
   neuron3.resetDelta();
 
   for(unsigned int i=0; i<100; i++) {
-    neuron1.reset();
-    neuron2.reset();
-    neuron3.reset();
+    neuron1.resetOutput();
+    neuron2.resetOutput();
+    neuron3.resetOutput();
     neuron1.resetGradients();
     neuron2.resetGradients();
     neuron3.resetGradients();
@@ -215,8 +215,8 @@ TEST (Network, create_and_delete) {
   ASSERT_EQ(network4.getNeuronByIndex(7)->getNumberOfSources(), 3);
   ASSERT_EQ(network4.getNeuronByIndex(8)->getNumberOfSources(), 3);
   std::vector<float> input {0.1, -0.2, -0.3, 0.4};
-  network3.reset();
-  network4.reset();
+  network3.resetOutputs();
+  network4.resetOutputs();
   network3.setInput(input);
   network4.setInput(input);
   std::vector<float> output3 = network3.getOutput();
@@ -263,7 +263,7 @@ TEST ( Network, create_connect_and_delete_neurons) {
   ASSERT_EQ(network.getNeuronByIndex(0)->getNumberOfSources(), 0);
   ASSERT_EQ(network.getNeuronByIndex(1)->getNumberOfSources(), 1);
 
-  network.reset();
+  network.resetOutputs();
   network.getNeuronByIndex(0)->forceOutput(0.1);
   ASSERT_FLOAT_EQ(network.getNeuronByIndex(1)->getOutput(), utils::activation_function(0.1*0.5));
 
@@ -317,7 +317,7 @@ TEST ( Network, create_and_delete_inputs_and_outputs) {
     network.getOutputByIndex(0),
     network.getNeuronByIndex(2)
   );
-  network.reset();
+  network.resetOutputs();
   ASSERT_THROW(
     network.setInput(std::vector<float> {}),
     std::invalid_argument
@@ -543,7 +543,7 @@ TEST (Network, packpropagation) {
   for(unsigned int k=0; k<1000; k++) {
     network.resetDelta();
     for(unsigned int i=0; i<inputs.size(); i++) {
-      network.reset();
+      network.resetOutputs();
       network.BackPropagation(inputs[i], outputs[i]);
       network.addGradientsToDelta();
     }
